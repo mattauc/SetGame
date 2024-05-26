@@ -27,7 +27,11 @@ class SetViewModel: ObservableObject {
     
     func selectCard(_ card: SetGame<Color>.Card) {
         print(card)
-        SetModel.selectCard(card)
+        if !card.isSelected {
+            SetModel.selectCard(card)
+        } else {
+            SetModel.deselectCard(card)
+        }
     }
     
     func drawMore() {
