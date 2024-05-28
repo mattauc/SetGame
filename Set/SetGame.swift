@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct SetGame<Colour> {
+struct SetGame<Colour: Equatable> {
     private(set) var cards: Array<Card>
     private(set) var numberToDraw = 12
-    private var listOfCombinations: [(Int, String, Colour, String)]
+    private(set) var listOfCombinations: [(Int, String, Colour, String)]
     private var selectedCards: Array<Card>
     
     
@@ -31,7 +31,16 @@ struct SetGame<Colour> {
     }
     
     var isMatch: Bool {
-        return true
+        return hasExactlyOneMatch(
+            selectedCards[0].shape == selectedCards[1].shape && selectedCards[1].shape == selectedCards[2].shape,
+            selectedCards[0].shading == selectedCards[1].shading && selectedCards[1].shading == selectedCards[2].shading,
+            selectedCards[0].shapeCount == selectedCards[1].shapeCount && selectedCards[1].shapeCount == selectedCards[2].shapeCount,
+            selectedCards[0].colour == selectedCards[1].colour && selectedCards[1].colour == selectedCards[2].colour
+        )
+    }
+
+    func hasExactlyOneMatch(_ matches: Bool...) -> Bool {
+        return matches.filter { $0 }.count == 1
     }
     
     mutating func makeNewCard(randomIndex: Int) -> Card? {
@@ -71,6 +80,10 @@ struct SetGame<Colour> {
                 removeCards(numberToRemove: selectedCards.count)
                 selectedCards = []
             }
+        } else if selectedCards.count == 3 {
+            for card in selectedCards {
+                deselectCard(card)
+            }
         }
         if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}) {
             if selectedCards.count < 3  && !cards[chosenIndex].isSelected{
@@ -79,6 +92,7 @@ struct SetGame<Colour> {
             }
         }
     }
+    
     
     mutating func deselectCard(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}) {

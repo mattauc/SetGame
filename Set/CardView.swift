@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CardView: View {
-    typealias Card = SetGame<Color>.Card
+    typealias Card = SetGame<CustomColour>.Card
     let card: Card
     
     init(_ card: Card) {
@@ -43,11 +43,11 @@ struct CardView: View {
     func selectedShapeView() -> some View {
         switch card.shape {
             case "diamond":
-                CardFactoryView<Diamond>(colour: card.colour, shading: card.shading, shape: Diamond())
+            CardFactoryView<Diamond>(colour: card.colour.getColour, shading: card.shading, shape: Diamond())
             case "rectangle":
-                CardFactoryView<Rectangle>(colour: card.colour, shading: card.shading, shape: Rectangle())
+                CardFactoryView<Rectangle>(colour: card.colour.getColour, shading: card.shading, shape: Rectangle())
             default:
-                CardFactoryView<Ellipse>(colour: card.colour, shading: card.shading, shape: Ellipse())
+                CardFactoryView<Ellipse>(colour: card.colour.getColour, shading: card.shading, shape: Ellipse())
         }
     }
 }
@@ -66,9 +66,9 @@ struct CardView_Previews: PreviewProvider {
     typealias Card = CardView.Card
     static var previews: some View {
         HStack {
-            CardView(Card(shape: "ellipse", shapeCount: 2, colour: Color.green, shading: "striped", id: "c"))
-            CardView(Card(shape: "rectangle", shapeCount: 3, colour: Color.blue, shading: "solid", id: "b"))
-            CardView(Card(shape: "diamond", shapeCount: 1, colour: Color.red, shading: "striped", id: "h"))
+            CardView(Card(shape: "ellipse", shapeCount: 2, colour: CustomColour.green, shading: "striped", id: "c"))
+            CardView(Card(shape: "rectangle", shapeCount: 3, colour: CustomColour.purple, shading: "solid", id: "b"))
+            CardView(Card(shape: "diamond", shapeCount: 1, colour: CustomColour.red, shading: "striped", id: "h"))
             
         }
     }

@@ -30,13 +30,20 @@ struct SetGameView: View {
     
     private var buttons: some View {
         HStack {
+            if SetViewModel.displayDrawButton() {
+                Button(action: {
+                    SetViewModel.drawMore()
+                }, label: {
+                    Image(systemName: "lanyardcard")
+                })
+            }
             Button(action: {
-                SetViewModel.drawMore()
+                SetViewModel.restartGame()
             }, label: {
-                Image(systemName: "lanyardcard")
+                Image(systemName: "restart.circle")
             })
-            .foregroundColor(.black)
         }
+        .foregroundColor(.black)
         .imageScale(.large)
         .font(.largeTitle)
     }

@@ -26,7 +26,7 @@ struct CardFactoryView<T>: View where T: Shape {
             .mask(shape)
             .overlay(shape.stroke(colour, lineWidth: borderLineWidth))
         } else if shading == "striped" {
-            colorStripes
+            colourStripes
             .mask(shape)
             .overlay(shape.stroke(colour, lineWidth: borderLineWidth))
         } else {
@@ -34,7 +34,7 @@ struct CardFactoryView<T>: View where T: Shape {
         }
     }
     
-    private var colorStripes: some View {
+    private var colourStripes: some View {
         HStack(spacing: 0) {
             ForEach(0..<numberOfStrips) { number in
                 Color.white
