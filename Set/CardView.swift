@@ -16,27 +16,19 @@ struct CardView: View {
     }
         
     var body: some View {
-        ZStack {
-            let base = RoundedRectangle(cornerRadius: 12)
-            base.foregroundColor(.white)
-            base.strokeBorder(lineWidth: 4)
-            VStack() {
-                CardContent
-            }
-            .padding()
-           
-        }
-        .highlightOnSelect(isSelected: card.isSelected)
-        .frame(minWidth: 70, maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
+        CardContent
+            .cardify(card: card)
     }
     
     var CardContent: some View {
-        ForEach(0..<card.shapeCount, id: \.self) { num in
-            selectedShapeView()
-                .aspectRatio(2/3, contentMode: .fit)
-                .minimumScaleFactor(0.01)
-                
+        VStack {
+            ForEach(0..<card.shapeCount, id: \.self) { num in
+                selectedShapeView()
+                    .aspectRatio(2/3, contentMode: .fit)
+                    .minimumScaleFactor(0.01)
+            }
         }
+        .padding()
     }
     
     @ViewBuilder
@@ -48,16 +40,6 @@ struct CardView: View {
                 CardFactoryView<Rectangle>(colour: card.colour.getColour, shading: card.shading, shape: Rectangle())
             default:
                 CardFactoryView<Ellipse>(colour: card.colour.getColour, shading: card.shading, shape: Ellipse())
-        }
-    }
-}
-
-extension View {
-    func highlightOnSelect(isSelected: Bool) -> some View {
-        if isSelected {
-            return foregroundColor(Color.yellow)
-        } else {
-            return foregroundColor(.black)
         }
     }
 }

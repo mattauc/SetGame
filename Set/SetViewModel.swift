@@ -17,17 +17,28 @@ class SetViewModel: ObservableObject {
     private static let gameShading: [String] = ["solid", "striped", "open"]
     private static let gameSize: Int = 81
     
+
     private static func createSetGame() -> SetGame<CustomColour> {
         return SetGame(shapes: gameShapes, colours: gameColours, shades: gameShading, gameSize: gameSize)
     }
     
+    var deck: Array<SetGame<CustomColour>.Card> {
+        return SetModel.deck
+    }
     
-    var cards: Array<SetGame<CustomColour>.Card> {
-        return SetModel.cards
+    var dealtCards: Array<SetGame<CustomColour>.Card> {
+        return SetModel.deck.filter { isDealt($0) }
+    }
+    
+    var nonDealtCards: Array<SetGame<CustomColour>.Card> {
+        return SetModel.deck.filter { !isDealt($0) }
+    }
+    
+    private func isDealt(_ card: SetGame<CustomColour>.Card) -> Bool {
+        return card.isDealt
     }
     
     func selectCard(_ card: SetGame<CustomColour>.Card) {
-        print(card)
         if !card.isSelected {
             SetModel.selectCard(card)
         } else {
@@ -35,8 +46,8 @@ class SetViewModel: ObservableObject {
         }
     }
     
-    func drawMore() {
-        SetModel.buildCards(numberToDraw: 3)
+    func drawMore() -> Array<SetGame<CustomColour>.Card>{
+        return SetModel.dealCards()
     }
     
     func restartGame() {
@@ -44,7 +55,7 @@ class SetViewModel: ObservableObject {
     }
     
     func displayDrawButton() -> Bool {
-        if SetModel.listOfCombinations.count == 0 {
+        if SetModel.deck.count == 0 {
             return false
         }
         return true

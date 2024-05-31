@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		67355B1A2C09436B00136FB7 /* Cardify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67355B192C09436B00136FB7 /* Cardify.swift */; };
 		67A352A12C00276E00AF2ABD /* SetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A352A02C00276E00AF2ABD /* SetApp.swift */; };
 		67A352A32C00276E00AF2ABD /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A352A22C00276E00AF2ABD /* SetGameView.swift */; };
 		67A352A52C00276F00AF2ABD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67A352A42C00276F00AF2ABD /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		67355B192C09436B00136FB7 /* Cardify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cardify.swift; sourceTree = "<group>"; };
 		67A3529D2C00276E00AF2ABD /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		67A352A02C00276E00AF2ABD /* SetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetApp.swift; sourceTree = "<group>"; };
 		67A352A22C00276E00AF2ABD /* SetGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameView.swift; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 		67A3529F2C00276E00AF2ABD /* Set */ = {
 			isa = PBXGroup;
 			children = (
+				67355B192C09436B00136FB7 /* Cardify.swift */,
 				67A352B82C014FF600AF2ABD /* CardFactoryView.swift */,
 				67A352A02C00276E00AF2ABD /* SetApp.swift */,
 				67A352A22C00276E00AF2ABD /* SetGameView.swift */,
@@ -158,6 +161,7 @@
 				67A352B92C014FF600AF2ABD /* CardFactoryView.swift in Sources */,
 				67A352A32C00276E00AF2ABD /* SetGameView.swift in Sources */,
 				67A352B12C00284100AF2ABD /* SetViewModel.swift in Sources */,
+				67355B1A2C09436B00136FB7 /* Cardify.swift in Sources */,
 				67A352B72C004B1700AF2ABD /* AspectVGrid.swift in Sources */,
 				67A352AF2C00282300AF2ABD /* SetGame.swift in Sources */,
 				67A352B32C00450B00AF2ABD /* Diamond.swift in Sources */,

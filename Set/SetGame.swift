@@ -8,26 +8,30 @@
 import Foundation
 
 struct SetGame<Colour: Equatable> {
-    private(set) var cards: Array<Card>
-    private(set) var numberToDraw = 12
-    private(set) var listOfCombinations: [(Int, String, Colour, String)]
+    //private(set) var cards: Array<Card>
+    private(set) var deck:  Array<Card>
     private var selectedCards: Array<Card>
-    
+    private(set) var cardIndex = 0
+    private var setNumber = 3
+    private(set) var numberToDraw: Int
+
     
     init(shapes: [String], colours: [Colour], shades: [String], gameSize: Int) {
-        listOfCombinations = []
-        cards = []
-        selectedCards = []
+        deck = []
+        var count = 0
         for index in 1..<4 {
             for selectShape in shapes {
                 for selectColour in colours {
                     for selectShade in shades {
-                        listOfCombinations.append((index, selectShape, selectColour, selectShade))
+                        count += 1
+                        deck.append(Card(shape: selectShape, shapeCount: index, colour: selectColour, shading: selectShade, id: String(count)))
                     }
                 }
             }
         }
-        buildCards(numberToDraw: numberToDraw)
+        numberToDraw = 12
+        selectedCards = []
+        deck.shuffle()
     }
     
     var isMatch: Bool {
@@ -40,63 +44,64 @@ struct SetGame<Colour: Equatable> {
     }
 
     func hasExactlyOneMatch(_ matches: Bool...) -> Bool {
-        return matches.filter { $0 }.count == 1
+        return true
+        //matches.filter { $0 }.count == 1
     }
     
-    mutating func makeNewCard(randomIndex: Int) -> Card? {
-        let combination = listOfCombinations[randomIndex]
-        if listOfCombinations.count > 0 {
-            let newCard = Card(shape: combination.1, shapeCount: combination.0, colour: combination.2, shading: combination.3, id: String(listOfCombinations.count))
-            listOfCombinations.remove(at: randomIndex)
-            return newCard
-        }
-        return nil
-    }
-    
-    mutating func buildCards(numberToDraw: Int) {
-        if listOfCombinations.count >= numberToDraw {
-            for _ in 0..<numberToDraw {
-                let randomIndex = Int.random(in: 0...listOfCombinations.count-1)
-                if let newCard = makeNewCard(randomIndex: randomIndex) {
-                    cards.append(newCard)
-                }
+
+    mutating func dealCards() -> Array<Card> {
+        var dealingDeck: Array<Card> = []
+        if (numberToDraw + cardIndex) < deck.count {
+            for index in cardIndex..<numberToDraw+cardIndex {
+                print(index)
+                deck[index].isDealt = true
+                dealingDeck.append(deck[index])
+                cardIndex += 1
             }
         }
+        if numberToDraw == 12 {
+            numberToDraw = 3
+        }
+        return dealingDeck
     }
     
     mutating func removeCards(numberToRemove: Int) {
         for selectedCard in selectedCards {
-            if let index = cards.firstIndex(where: { $0.id == selectedCard.id }) {
-                cards.remove(at: index)
+            if let index = deck.firstIndex(where: { $0.id == selectedCard.id }) {
+                deck.remove(at: index)
             }
         }
     }
     
     mutating func selectCard(_ card: Card) {
-        if selectedCards.count == 3 && isMatch {
-            if listOfCombinations.count >= 3 {
+        checkMatch(card)
+        if let chosenIndex = deck.firstIndex(where: {$0.id == card.id}) {
+            if selectedCards.count < setNumber  && !deck[chosenIndex].isSelected{
+                deck[chosenIndex].isSelected = true
+                selectedCards.append(deck[chosenIndex])
+            }
+        }
+    }
+    
+    mutating private func checkMatch(_ card: Card) {
+        if selectedCards.count == setNumber && isMatch {
+            if deck.count >= setNumber {
                 replaceMatch()
             } else {
                 removeCards(numberToRemove: selectedCards.count)
                 selectedCards = []
             }
-        } else if selectedCards.count == 3 {
+        } else if selectedCards.count == setNumber {
             for card in selectedCards {
                 deselectCard(card)
-            }
-        }
-        if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}) {
-            if selectedCards.count < 3  && !cards[chosenIndex].isSelected{
-                cards[chosenIndex].isSelected = true
-                selectedCards.append(cards[chosenIndex])
             }
         }
     }
     
     
     mutating func deselectCard(_ card: Card) {
-        if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}) {
-            cards[chosenIndex].isSelected = false
+        if let chosenIndex = deck.firstIndex(where: {$0.id == card.id}) {
+            deck[chosenIndex].isSelected = false
             if let selectedIndex = selectedCards.firstIndex(where: {$0.id == card.id}) {
                 selectedCards.remove(at: selectedIndex)
             }
@@ -106,11 +111,8 @@ struct SetGame<Colour: Equatable> {
     
     mutating func replaceMatch() {
         for selectedCard in selectedCards {
-            if let index = cards.firstIndex(where: { $0.id == selectedCard.id }) {
-                let random = Int.random(in: 0...listOfCombinations.count-1)
-                if let newCard = makeNewCard(randomIndex: random) {
-                    cards[index] = newCard
-                }
+            if let index = deck.firstIndex(where: { $0.id == selectedCard.id }) {
+                deck.remove(at: index)
             }
         }
         selectedCards = []
@@ -122,10 +124,11 @@ struct SetGame<Colour: Equatable> {
         let colour: Colour
         let shading: String
         var isSelected = false
+        var isDealt = false
         
         let id: String
         var debugDescription: String {
-                    "\(id): \(shape) \(isSelected ? " IsSelected" : " NotSelected")"
+                    "\(id): \(shape) \(isSelected ? " IsSelected" : " NotSelected") \(shading) \(shapeCount) \(isDealt ? " IsDealt" : " NotDealt")"
                 }
     }
 }

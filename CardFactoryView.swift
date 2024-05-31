@@ -36,7 +36,7 @@ struct CardFactoryView<T>: View where T: Shape {
     
     private var colourStripes: some View {
         HStack(spacing: 0) {
-            ForEach(0..<numberOfStrips) { number in
+            ForEach(0..<5) { number in
                 Color.white
                 colour.frame(width: lineWidth)
                 if number == numberOfStrips - 1 {
