@@ -7,7 +7,7 @@ Welcome to the Set Card Game application! This project recreates the classic car
 The game of Set is played with a unique deck of cards. Each card has four attributes:
 
 - **Number**: One, two, or three symbols.
-- **Shape**: Diamonds, squiggles, or ovals.
+- **Shape**: Diamonds, rectangles, or ovals.
 - **Shading**: Solid, striped, or open.
 - **Color**: Red, green, or purple.
 
