@@ -16,8 +16,11 @@ struct CardView: View {
     }
         
     var body: some View {
-        CardContent
-            .cardify(card: card)
+        TimelineView(.animation) { timeline in
+            CardContent
+                .cardify(card: card)
+                .transition(.scale)
+        }
     }
     
     var CardContent: some View {
@@ -40,18 +43,6 @@ struct CardView: View {
                 CardFactoryView<Rectangle>(colour: card.colour.getColour, shading: card.shading, shape: Rectangle())
             default:
                 CardFactoryView<Ellipse>(colour: card.colour.getColour, shading: card.shading, shape: Ellipse())
-        }
-    }
-}
-
-struct CardView_Previews: PreviewProvider {
-    typealias Card = CardView.Card
-    static var previews: some View {
-        HStack {
-            CardView(Card(shape: "ellipse", shapeCount: 2, colour: CustomColour.green, shading: "striped", id: "c"))
-            CardView(Card(shape: "rectangle", shapeCount: 3, colour: CustomColour.purple, shading: "solid", id: "b"))
-            CardView(Card(shape: "diamond", shapeCount: 1, colour: CustomColour.red, shading: "striped", id: "h"))
-            
         }
     }
 }

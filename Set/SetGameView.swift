@@ -11,7 +11,8 @@ struct SetGameView: View {
     typealias Card = SetGame<CustomColour>.Card
     @ObservedObject var SetViewModel: SetViewModel
     @Namespace private var dealingNameSpace
-    @Namespace private var discaringNameSpace
+    @Namespace private var discardingNameSpace
+    @State private var dealInProcess = false
     private let aspectRatio: CGFloat = 2/3
     private let deckWidth: CGFloat = 50
     private let timeInterval = 0.3
@@ -30,6 +31,7 @@ struct SetGameView: View {
             if isDealt(card) {
                 CardView(card)
                     .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .matchedGeometryEffect(id: card.id, in: discardingNameSpace)
                     .transition(.asymmetric(insertion: .identity, removal: .identity))
                     .padding(3)
                     .onTapGesture {
@@ -48,7 +50,7 @@ struct SetGameView: View {
                 Spacer()
                 restartButton
                 Spacer()
-                discard.padding()
+                discardDeck.padding()
             }
             .foregroundColor(.black)
             .imageScale(.large)
@@ -65,6 +67,7 @@ struct SetGameView: View {
         }, label: {
             Image(systemName: "restart.circle")
         })
+        .disabled(dealInProcess)
     }
     
     @State private var dealt = Set<Card.ID>()
@@ -72,43 +75,51 @@ struct SetGameView: View {
     private func isDealt(_ card: Card) -> Bool {
         dealt.contains(card.id)
     }
-    
-    private var undealtCards: [Card] {
-        SetViewModel.deck.filter {!isDealt($0)}
-    }
-    
+
     private var deck: some View {
         ZStack {
-            ForEach(SetViewModel.nonDealtCards.reversed()) { card in
+            ForEach(Array(SetViewModel.nonDealtCards.reversed().enumerated()), id: \.1.id) { index, card in
                 CardView(card)
                     .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
                     .transition(.asymmetric(insertion: .identity, removal: .identity))
+                    .offset(x: CGFloat(index) * 0.1, y: CGFloat(index) * -0.1)
+                    .zIndex(Double(index) * 0.1)
             }
         }
         .frame(width: deckWidth, height: deckWidth / aspectRatio)
         .onTapGesture() {
-            let dealingDeck = SetViewModel.drawMore()
-            deal(dealingDeck)
+            if !dealInProcess {
+                deal(SetViewModel.drawMore())
+            }
         }
     }
     
     private func deal(_ dealingDeck: Array<Card>) {
         var delay: TimeInterval = 0
+        dealInProcess = true
         for card in dealingDeck {
             withAnimation(.easeInOut(duration: timeInterval).delay(delay)) {
                 _ = dealt.insert(card.id)
             }
             delay += 0.15
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay + timeInterval) {
+            dealInProcess = false
+        }
+        if SetViewModel.matched {
+            withAnimation(.easeInOut(duration: timeInterval)) {
+                SetViewModel.discardMatching()
+            }
+        }
     }
-    @State private var discarded = Set<Card.ID>()
-    
-    private var discard: some View {
+
+    private var discardDeck: some View {
         ZStack {
-            ForEach(SetViewModel.dealtCards) { card in
+            ForEach(Array(SetViewModel.getMatchedList.suffix(4).enumerated()), id: \.1.id) { index, card in
                 CardView(card)
-                    .matchedGeometryEffect(id: card.id, in: discaringNameSpace)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
                     .transition(.asymmetric(insertion: .identity, removal: .identity))
+                    .offset(x: CGFloat(index) * -0.1, y: CGFloat(index) * 0.1)
             }
         }
         .frame(width: deckWidth, height: deckWidth / aspectRatio)

@@ -9,7 +9,7 @@ import SwiftUI
 import CoreGraphics
 
 class SetViewModel: ObservableObject {
-    
+    typealias Card = SetGame<CustomColour>.Card
     @Published private var SetModel = createSetGame()
     
     private static let gameColours: [CustomColour] = [CustomColour.red, CustomColour.purple, CustomColour.green]
@@ -27,11 +27,20 @@ class SetViewModel: ObservableObject {
     }
     
     var dealtCards: Array<SetGame<CustomColour>.Card> {
-        return SetModel.deck.filter { isDealt($0) }
+        return SetModel.deck.filter { card in
+            isDealt(card) && !card.isMatched}
     }
     
     var nonDealtCards: Array<SetGame<CustomColour>.Card> {
         return SetModel.deck.filter { !isDealt($0) }
+    }
+    
+    var matched: Bool {
+        return SetModel.match
+    }
+    
+    var getMatchedList: Array<SetGame<CustomColour>.Card> {
+        return SetModel.matchedList
     }
     
     private func isDealt(_ card: SetGame<CustomColour>.Card) -> Bool {
@@ -44,6 +53,10 @@ class SetViewModel: ObservableObject {
         } else {
             SetModel.deselectCard(card)
         }
+    }
+    
+    func discardMatching() {
+        SetModel.replaceMatch()
     }
     
     func drawMore() -> Array<SetGame<CustomColour>.Card>{

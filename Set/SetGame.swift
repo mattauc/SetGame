@@ -8,12 +8,13 @@
 import Foundation
 
 struct SetGame<Colour: Equatable> {
-    //private(set) var cards: Array<Card>
-    private(set) var deck:  Array<Card>
-    private var selectedCards: Array<Card>
+    private(set) var deck: Array<Card>
+    private(set) var selectedCards: Array<Card>
     private(set) var cardIndex = 0
     private var setNumber = 3
     private(set) var numberToDraw: Int
+    private(set) var match = false
+    private(set) var matchedList: [Card] = []
 
     
     init(shapes: [String], colours: [Colour], shades: [String], gameSize: Int) {
@@ -44,17 +45,15 @@ struct SetGame<Colour: Equatable> {
     }
 
     func hasExactlyOneMatch(_ matches: Bool...) -> Bool {
-        return true
-        //matches.filter { $0 }.count == 1
+        return matches.filter { $0 }.count == 1
     }
-    
 
     mutating func dealCards() -> Array<Card> {
         var dealingDeck: Array<Card> = []
-        if (numberToDraw + cardIndex) < deck.count {
+        if (numberToDraw + cardIndex) <= deck.count {
             for index in cardIndex..<numberToDraw+cardIndex {
-                print(index)
-                deck[index].isDealt = true
+                //print(index)
+                deck[index].isFaceUp = true
                 dealingDeck.append(deck[index])
                 cardIndex += 1
             }
@@ -74,11 +73,15 @@ struct SetGame<Colour: Equatable> {
     }
     
     mutating func selectCard(_ card: Card) {
+        match = false
         checkMatch(card)
         if let chosenIndex = deck.firstIndex(where: {$0.id == card.id}) {
             if selectedCards.count < setNumber  && !deck[chosenIndex].isSelected{
                 deck[chosenIndex].isSelected = true
                 selectedCards.append(deck[chosenIndex])
+                if selectedCards.count == setNumber && isMatch {
+                    match = true
+                }
             }
         }
     }
@@ -112,7 +115,9 @@ struct SetGame<Colour: Equatable> {
     mutating func replaceMatch() {
         for selectedCard in selectedCards {
             if let index = deck.firstIndex(where: { $0.id == selectedCard.id }) {
-                deck.remove(at: index)
+                deck[index].isMatched = true
+                deck[index].isSelected = false
+                matchedList.append(deck[index])
             }
         }
         selectedCards = []
@@ -123,8 +128,17 @@ struct SetGame<Colour: Equatable> {
         let shapeCount: Int
         let colour: Colour
         let shading: String
+        var isFaceUp = false {
+            willSet {
+                if newValue {
+                    isDealt = true
+                }
+            }
+        }
         var isSelected = false
         var isDealt = false
+        var isMatched = false
+        
         
         let id: String
         var debugDescription: String {

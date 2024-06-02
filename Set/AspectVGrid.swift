@@ -27,7 +27,7 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
                 atAspectRatio: aspectRatio
             )
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: gridItemSize), spacing: 0)], spacing: 0) {
+               LazyVGrid(columns: [GridItem(.adaptive(minimum: gridItemSize), spacing: 0)], spacing: 0) {
                     ForEach(items) { item in
                         content(item)
                             .aspectRatio(aspectRatio, contentMode: .fit)

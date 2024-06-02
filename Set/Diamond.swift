@@ -10,7 +10,6 @@ import CoreGraphics
 
 struct Diamond: Shape {
     func path(in rect: CGRect) -> Path {
-        //let center =  CGPoint(x: rect.midX, y: rect.midY)
         let start = CGPoint(x: rect.maxX, y: rect.midY)
         let top = CGPoint(x: rect.midX, y: rect.maxY)
         let bottom = CGPoint(x: rect.midX, y: rect.minY)
