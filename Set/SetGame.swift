@@ -17,7 +17,7 @@ struct SetGame<Colour: Equatable> {
     private(set) var matchedList: [Card] = []
 
     
-    init(shapes: [String], colours: [Colour], shades: [String], gameSize: Int) {
+    init(shapes: [String], colours: [Colour], shades: [String], gameSize: Int, numberToDraw: Int) {
         deck = []
         var count = 0
         for index in 1..<4 {
@@ -30,41 +30,38 @@ struct SetGame<Colour: Equatable> {
                 }
             }
         }
-        numberToDraw = 12
+        self.numberToDraw = numberToDraw
         selectedCards = []
         deck.shuffle()
     }
     
     var isMatch: Bool {
-        return hasExactlyOneMatch(
-            selectedCards[0].shape == selectedCards[1].shape && selectedCards[1].shape == selectedCards[2].shape,
-            selectedCards[0].shading == selectedCards[1].shading && selectedCards[1].shading == selectedCards[2].shading,
-            selectedCards[0].shapeCount == selectedCards[1].shapeCount && selectedCards[1].shapeCount == selectedCards[2].shapeCount,
-            selectedCards[0].colour == selectedCards[1].colour && selectedCards[1].colour == selectedCards[2].colour
-        )
+        return allSameOrAllDifferent(selectedCards[0].shape, selectedCards[1].shape, selectedCards[2].shape) &&
+               allSameOrAllDifferent(selectedCards[0].shading, selectedCards[1].shading, selectedCards[2].shading) &&
+               allSameOrAllDifferent(selectedCards[0].shapeCount, selectedCards[1].shapeCount, selectedCards[2].shapeCount) &&
+               allSameOrAllDifferent(selectedCards[0].colour, selectedCards[1].colour, selectedCards[2].colour)
     }
 
-    func hasExactlyOneMatch(_ matches: Bool...) -> Bool {
-        return matches.filter { $0 }.count == 1
+    func allSameOrAllDifferent<T: Equatable>(_ a: T, _ b: T, _ c: T) -> Bool {
+        return (a == b && b == c) || (a != b && b != c && a != c)
     }
 
     mutating func dealCards() -> Array<Card> {
         var dealingDeck: Array<Card> = []
         if (numberToDraw + cardIndex) <= deck.count {
             for index in cardIndex..<numberToDraw+cardIndex {
-                //print(index)
                 deck[index].isFaceUp = true
                 dealingDeck.append(deck[index])
                 cardIndex += 1
             }
         }
-        if numberToDraw == 12 {
+        if numberToDraw > 3 {
             numberToDraw = 3
         }
         return dealingDeck
     }
     
-    mutating func removeCards(numberToRemove: Int) {
+    mutating func removeCards() {
         for selectedCard in selectedCards {
             if let index = deck.firstIndex(where: { $0.id == selectedCard.id }) {
                 deck.remove(at: index)
@@ -76,7 +73,7 @@ struct SetGame<Colour: Equatable> {
         match = false
         checkMatch(card)
         if let chosenIndex = deck.firstIndex(where: {$0.id == card.id}) {
-            if selectedCards.count < setNumber  && !deck[chosenIndex].isSelected{
+            if selectedCards.count < setNumber  && !deck[chosenIndex].isSelected && deck[chosenIndex].isDealt {
                 deck[chosenIndex].isSelected = true
                 selectedCards.append(deck[chosenIndex])
                 if selectedCards.count == setNumber && isMatch {
@@ -91,7 +88,7 @@ struct SetGame<Colour: Equatable> {
             if deck.count >= setNumber {
                 replaceMatch()
             } else {
-                removeCards(numberToRemove: selectedCards.count)
+                removeCards()
                 selectedCards = []
             }
         } else if selectedCards.count == setNumber {
@@ -138,7 +135,6 @@ struct SetGame<Colour: Equatable> {
         var isSelected = false
         var isDealt = false
         var isMatched = false
-        
         
         let id: String
         var debugDescription: String {

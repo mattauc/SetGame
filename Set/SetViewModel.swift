@@ -19,7 +19,7 @@ class SetViewModel: ObservableObject {
     
 
     private static func createSetGame() -> SetGame<CustomColour> {
-        return SetGame(shapes: gameShapes, colours: gameColours, shades: gameShading, gameSize: gameSize)
+        return SetGame(shapes: gameShapes, colours: gameColours, shades: gameShading, gameSize: gameSize, numberToDraw: 12)
     }
     
     var deck: Array<SetGame<CustomColour>.Card> {
